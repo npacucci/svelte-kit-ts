@@ -1,11 +1,8 @@
 import { getData } from '../../lib/data/fakeData'
+import type { PageServerLoad } from './$types';
 
-export interface LiveWidgetData {
-  list: any[]
-}
-
-export const load = async () => {
+export const load = (async () => {
   return {
     list: getData()
   }
-}
+}) satisfies PageServerLoad;

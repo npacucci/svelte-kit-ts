@@ -1,8 +1,13 @@
 <script lang="ts">
-	import type { LiveWidgetData } from './+page.server';
+	import { onMount } from 'svelte';
+  import type { PageData } from './$types';
 
-  export let data: LiveWidgetData;
+  export let data: PageData;
   $: ({ list } = data);
+  
+  onMount(() => {
+    console.log('Live Widget on mount');
+  })
 </script>
 
 <h1> Live Widget Component </h1>
