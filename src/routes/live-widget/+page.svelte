@@ -1,16 +1,47 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { getQuotes } from '$lib/data/dataService';
+	import { onDestroy, onMount } from 'svelte';
   import type { PageData } from './$types';
 
+  const LIMIT: number = 30;
+  const INTERVAL: number = 5000;
+
   export let data: PageData;
-  $: ({ list } = data);
-  
+  $: ({ quotes } = data);
+
+  let isLive: boolean = true;
+  let pollingLoop: any;
+
   onMount(() => {
-    console.log('Live Widget on mount');
+    pollingLoop = setInterval(() => pollingData(5), INTERVAL);
   })
+
+  onDestroy(() => {
+    destroyLoop();
+  })
+
+  const pollingData = async (amount: number = 3) => {
+    let newAmount: number = amount;
+    const newLength: number = quotes.length + amount;
+    if (newLength >= LIMIT) {
+      newAmount = LIMIT - quotes.length;
+      destroyLoop();
+    }
+    const newData = await getQuotes(newAmount, quotes.length);
+    quotes = [...quotes, ...newData];
+  }
+
+  const destroyLoop = () => { 
+    clearInterval(pollingLoop);
+    isLive = false;
+  }
 </script>
 
 <h1> Live Widget Component </h1>
+
+{#if isLive}
+   <span class="live"> LIVE </span>
+{/if}
 
 <table cellspacing="10" cellpadding="10">
   <thead>
@@ -20,10 +51,10 @@
     </tr>
   </thead>
   <tbody>
-    {#each list as i}
+    {#each quotes as q}
     <tr>
-      <td>{i.title}</td>
-      <td>{i.assigned}</td>
+      <td>{q.quote}</td>
+      <td>{q.author}</td>
     </tr>
     {/each}
   </tbody>
@@ -32,5 +63,10 @@
 <style>
   th {
     text-align: left;
+  }
+
+  .live {
+    color: red;
+    font-weight: bold;
   }
 </style>

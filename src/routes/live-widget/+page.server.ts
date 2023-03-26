@@ -1,8 +1,8 @@
-import { getData } from '../../lib/data/fakeData'
+import { getQuotes } from '../../lib/data/dataService'
 import type { PageServerLoad } from './$types';
 
 export const load = (async () => {
   return {
-    list: getData()
+    quotes: getQuotes(5)
   }
 }) satisfies PageServerLoad;
