@@ -2,7 +2,7 @@
  * Returns data from https://dummyjson.com/docs/quotes
  * @returns 
  */
-export async function getQuotes(limit?: number, skip?: number) {
+export const getQuotes = async (limit?: number, skip?: number) => {
   const params: Record<string, any> = {};
   if (limit != null) {
     params.limit = limit;
